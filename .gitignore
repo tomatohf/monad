@@ -11,3 +11,11 @@ project/plugins/project/
 
 # Scala-IDE specific
 .scala_dependencies
+
+
+#####################
+# [above] by github #
+# [below] by Tomato #
+#####################
+
+.DS_Store
