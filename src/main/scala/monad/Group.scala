@@ -1,7 +1,5 @@
 package monad
 
-import scala.math.Numeric
-
 trait SemiGroup[T] {
 	// closure
 	def operator(x: T, y: T): T
