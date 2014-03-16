@@ -2,34 +2,29 @@ package monad
 
 import scala.language.higherKinds
 
-trait Functor[/* lift type */M[_]] {
-	// lift morphism/function
-	def lift[A, B](f: A => B): M[A] => M[B]
+trait Functor[F[_]] {
+	// fmap
+	def map[A, B](f: A => B): F[A] => F[B]
 }
-trait ListFunctor extends Functor[List] {
-	def lift[A, B](f: A => B) = _.map(f)
-}
-trait OptionFunctor extends Functor[Option] {
-	def lift[A, B](f: A => B) = _.map(f)
+/*
+ * Assuming that all types and morphisms(functions) are in the Hask category,
+ * all functors are endofunctors(map Hask to Hask)
+ */
+trait EndoFunctor[F[_]] extends Functor[F]
+trait IdentityFunctor extends EndoFunctor[({ type Identity[T] = T })#Identity] {
+	def map[A, B](f: A => B) = f
 }
 
 
-trait Container[X] extends Functor[Container] {
-	def map[Y](f: X => Y): Container[Y]
-	def lift[A, B](f: A => B) = _.map(f)
+trait ListFunctor[T] extends EndoFunctor[List] {
+	def map[A, B](f: A => B) = _.map(f)
 }
-case class NaiveContainer[X](x: X) extends Container[X] {
-	def map[Y](f: X => Y) = NaiveContainer(f(x))
+trait OptionFunctor extends EndoFunctor[Option] {
+	def map[A, B](f: A => B) = _.map(f)
 }
 
 
 trait EndoFunction[T] extends Function1[T, T]
 trait IdentityFunction[T] extends EndoFunction[T] {
 	def apply(t: T) = t
-}
-
-
-trait EndoFunctor extends Functor[({ type Identity[T] = T })#Identity]
-trait IdentityFunctor extends EndoFunctor {
-	def lift[A, B](f: A => B) = f
 }
